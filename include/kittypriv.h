@@ -11,6 +11,7 @@
 #include <commctrl.h>
 #include <shlobj.h>
 #include <shlwapi.h>
+#include <shellapi.h>
 
 #pragma comment(lib, "comctl32.lib")
 #pragma comment(lib, "advapi32.lib")
