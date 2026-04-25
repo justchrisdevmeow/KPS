@@ -6,8 +6,6 @@ on:
     paths:
       - 'src/**'
       - 'include/**'
-      - 'Makefile'
-      - 'kittypriv.manifest'
   workflow_dispatch:
 
 jobs:
@@ -18,16 +16,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Install MSYS2 (for make/gcc)
-        uses: msys2/setup-msys2@v2
+      - name: Setup MinGW
+        uses: egor-tensin/setup-mingw@v2
         with:
-          msystem: MINGW64
-          install: mingw-w64-x86_64-gcc mingw-w64-x86_64-make
+          platform: x64
       
-      - name: Build KittyPrivSystem
-        shell: msys2 {0}
+      - name: Compile
         run: |
-          make -f Makefile
+          gcc -c src/main.c -o main.o -Iinclude
+          gcc -c src/utils.c -o utils.o -Iinclude
+          gcc -c src/system.c -o system.o -Iinclude
+          gcc -c src/file.c -o file.o -Iinclude
+          windres src/resource.rc -o resource.o
+          gcc -o KittyPrivSystem.exe main.o utils.o system.o file.o resource.o -lgdi32 -lcomctl32 -ladvapi32 -luser32 -lshell32 -lshlwapi
       
       - name: Upload executable
         uses: actions/upload-artifact@v4
